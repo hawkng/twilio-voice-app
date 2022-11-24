@@ -1,6 +1,8 @@
 # Twilio Voice JavaScript Demo - Call using Browser
 
-Adapted from [Twilio blog](https://www.twilio.com/blog/programmable-voice-javascript-quickstart-demo-node)
+Adapted from [Twilio blog](https://www.twilio.com/blog/programmable-voice-javascript-quickstart-demo-node) & [Tutorial](https://www.twilio.com/docs/voice/sdks/javascript/get-started)
+* Can be deployed as Twilio Functions
+
 * Add feature to allow specify the device name using URL Parameter
   - https://example.com/voice
   - By default, the app will generate a random name without parameter. 
