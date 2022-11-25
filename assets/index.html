@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Twilio Voice JavaScript SDK Quickstart</title>
+    <title>Twilio Voice Call Demo</title>
     <link rel="stylesheet" href="site.css" />
   </head>
   <body>
     <header>
-      <h1>Twilio Voice JavaScript SDK Quickstart</h1>
-      <button id="startup-button">Start up the Device</button>
+      <h1 style='color:blue'>Twilio Voice Call Demo</h1>
+      <button id="startup-button-app" style="margin-right:15px">Start Device (App)</button>
+      <button id="startup-button-flex">Start Device (Flex)</button>
     </header>
     <main id="controls">
       <section class="left-column" id="info">
@@ -27,7 +28,7 @@
         <div id="call-controls" class="hide">
           <form>
             <label for="phone-number">Enter a phone number or client name</label>
-            <input id="phone-number" type="text" placeholder="+15552221234" />
+            <input id="phone-number" type="text" placeholder="+15552221234" value="+13019234964"/>
              <span style="display:inline-flex">
               <button id="button-call" type="submit" style="width:30%">Call</button>
               <input type="checkbox" id="checkbox-recording" value="true" style="height:1em;width:50px;top:-5px;position:relative"/>

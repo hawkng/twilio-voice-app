@@ -100,14 +100,15 @@ exports.handler = function(context, event, callback) {
 
   const { ACCOUNT_SID } = context;
   // set these values in your .env file
-  const { TWIML_APPLICATION_SID, API_KEY, API_SECRET } = context;
+  const { TWIML_APPLICATION_SID_APP, TWIML_APPLICATION_SID_FLEX, API_KEY, API_SECRET } = context;
 
   const accessToken = new AccessToken(ACCOUNT_SID, API_KEY, API_SECRET);
   let identity = event.name || generateName();
+  let target = event.target || 'app';
 
   accessToken.identity = identity.toLowerCase();
   const grant = new VoiceGrant({
-    outgoingApplicationSid: TWIML_APPLICATION_SID,
+    outgoingApplicationSid: (target == 'app') ? TWIML_APPLICATION_SID_APP : TWIML_APPLICATION_SID_FLEX,
     incomingAllow: true,
   });
   accessToken.addGrant(grant);

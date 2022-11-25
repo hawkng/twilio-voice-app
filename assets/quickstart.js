@@ -26,7 +26,8 @@ $(function () {
   );
   const phoneNumberInput = document.getElementById("phone-number");
   const incomingPhoneNumberEl = document.getElementById("incoming-number");
-  const startupButton = document.getElementById("startup-button");
+  const startupButtonApp = document.getElementById("startup-button-app");
+  const startupButtonFlex = document.getElementById("startup-button-flex");
 
   let device;
   let token;
@@ -46,23 +47,22 @@ $(function () {
   // SETUP STEP 1:
   // Browser client should be started after a user gesture
   // to avoid errors in the browser console re: AudioContext
-  startupButton.addEventListener("click", startupClient);
+  startupButtonApp.addEventListener("click", ()=>startupClient('app'));
+  startupButtonFlex.addEventListener("click", ()=>startupClient('flex'));
 
   // SETUP STEP 2: Request an Access Token
-  async function startupClient() {
+  async function startupClient(target) {
     //check identity
 
-
-
-    log("Requesting Access Token...");
+    log("Requesting Access Token..."+ target);
 
     try {
       const params = new URLSearchParams(window.location.search);
-      const data = await $.getJSON("/token", {'name':params.get("name")});
+      const data = await $.getJSON("/token", {'name':params.get("name"), 'target' : target});
       log("Got a token.");
       token = data.token;
       setClientNameUI(data.identity);
-      intitializeDevice();
+      intitializeDevice(target); //allowRecording only if target is App, flex not allow recording
     } catch (err) {
       console.log(err);
       log("An error occurred. See your browser console for more information.");
@@ -71,7 +71,23 @@ $(function () {
 
   // SETUP STEP 3:
   // Instantiate a new Twilio.Device
-  function intitializeDevice() {
+  function intitializeDevice(target) {
+    recordingCheckbox.checked = false;
+    recordingCheckbox.disabled = (target=='app'); //allowRecording only if target is App, flex not allow recording
+
+
+    if (target=='app') {
+      recordingCheckbox.disabled = false;
+      phoneNumberInput.value = '';
+      phoneNumberInput.placeholder = '+15552221234 or john';
+      phoneNumberInput.readOnly  = false;
+    }
+    else if (target=='flex') {
+      recordingCheckbox.disabled = true;
+      phoneNumberInput.value = '+13019234964';
+      phoneNumberInput.readOnly  = true;
+    }
+
     logDiv.classList.remove("hide");
     logRecordingDiv.classList.remove("hide");
 
@@ -175,7 +191,7 @@ $(function () {
   }
 
   function updateUIAcceptedOutgoingCall(call) {
-    log("Call in progress ...");
+    log("Call in progress ..."+ call.parameters.CallSid);
     callSid = call.parameters.CallSid;
     callButton.disabled = true;
     outgoingCallHangupButton.classList.remove("hide");
@@ -187,12 +203,12 @@ $(function () {
 
         let recordPolling = setInterval(async function () {
           console.log("polling call SID", callSid);
-          const result = await $.getJSON("./get-voice-recording?callSid", {'callSid':callSid});
+          const result = await $.getJSON("./get-voice-recording", {'callSid':callSid});
           console.log('recording',result);
 
           if (result.length>0){
             console.log("clear polling");
-            let recordingUrl = `http://api.twilio.com/2010-04-01/Accounts/${result[0].accountSid}/Recordings/${result[0].sid}`
+            let recordingUrl = `http://api.twilio.com/2010-04-01/Accounts/${result[result.length-1].accountSid}/Recordings/${result[result.length-1].sid}`
             let message = "<a target='_blank' href='" + recordingUrl + "'>Recording for call @ " + result[0].startTime.replace(".000Z","")  +"</a>"
             logRecordingDiv.innerHTML = `<p class="log-entry">&gt;${message} </p>` + logRecordingDiv.innerHTML;
             logRecordingDiv.scrollTop = logRecordingDiv.scrollHeight;
