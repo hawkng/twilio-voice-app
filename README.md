@@ -14,9 +14,7 @@ Adapted from [Twilio blog](https://www.twilio.com/blog/programmable-voice-javasc
   - Recording link will be available after the call ended in the Recording Log panel
   - Recording is not available when calling to Flex Agent
 
-* If callee rejected the incoming call, the caller's browser is not updated and the call status remains "ringing"
-  - Added polling to check the status and auto disconnect the call after 30 seconds
-  - Modify the constant **CALL_TIME_OUT** in ***/assets/quickstart.js***
+* Added option to call the Flex Agent from the browser
 
 ## Setup
 1. Create 2 TwilML Apps, for calling to another user on browser and to Flex respectively
@@ -34,8 +32,29 @@ Adapted from [Twilio blog](https://www.twilio.com/blog/programmable-voice-javasc
    - Copy the Studio Flow Webhook URL and update **TWIML_APPLCATION_SID_FLEX** voice configuration accordingly
    ![image](https://user-images.githubusercontent.com/29279065/203921009-f7bbc240-a597-463e-a888-7a7da4b413da.png)
 
-
-
+   - Default flex plugin will generate error when the agent accept the task with incoming call
+   
+    ```
+     {
+        "message": "could not accept call",
+        "wrappedError": "Request failed with status code 400",
+        "type": "taskrouterSDK",
+        "description": "Could not accept call: Request failed with status code 400",
+        "context": "WorkerActions.AcceptTask",
+        "severity": "normal",
+        "twilioErrorCode": 45600
+    }
+    ```
+    
+    Customize a new Flex plugin and add the following code snippet to **init(flex, manager)** function fix it
+    
+    ```
+    flex.Actions.replaceAction('AcceptTask', (payload, original) => {      
+      payload.conferenceOptions.from = "anything";
+      return original(payload);
+    })
+    ```
+    
 ## Usage
 * Click **Start Device (App)** to make call between browsers
 * Click **Start Device (Flex)** to make call from browser to Flex Agent
