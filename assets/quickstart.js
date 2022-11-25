@@ -1,5 +1,6 @@
 $(function () {
   const CALL_TIME_OUT = 30000; //30 seconds
+  const CALLER_ID = '+13019234964';
   const speakerDevices = document.getElementById("speaker-devices");
   const ringtoneDevices = document.getElementById("ringtone-devices");
   const outputVolumeBar = document.getElementById("output-volume");
@@ -84,7 +85,7 @@ $(function () {
     }
     else if (target=='flex') {
       recordingCheckbox.disabled = true;
-      phoneNumberInput.value = '+13019234964';
+      phoneNumberInput.value = CALLER_ID;
       phoneNumberInput.readOnly  = true;
     }
 
